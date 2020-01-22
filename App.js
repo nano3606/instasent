@@ -10,6 +10,7 @@ export default class Bananas extends Component {
     hours: `00`,
     minutes: `00`,
     seconds: `00`,
+    chronometerInterval: null
   }
 
   async componentDidMount() {
@@ -22,17 +23,72 @@ export default class Bananas extends Component {
   }
 
   play(){
-    this.chronometer()
+    this.setState({
+      chronometerInterval: setInterval(() => this.chronometer(), 1000)
+    })
+  }
+
+  stop(){
+    clearInterval(this.state.chronometerInterval)
+  }
+
+  reset(){
+    clearInterval(this.state.chronometerInterval)
+    this.setState({
+      hours: `00`,
+      minutes: `00`,
+      seconds: `00`,
+    })
   }
 
   chronometer(){
-    console.log('s1 :' + this.state.seconds)
-    let s = this.state.seconds ++
-    this.setState(previousState => ({
-      seconds: `0` + previousState.seconds
+    this.state.seconds ++
+
+    if (this.state.seconds < 10){
+      this.setState(previousState => ({
+        seconds: `0` + previousState.seconds
+      }))
+    } else {
+      this.setState(previousState => ({
+        seconds: + previousState.seconds
+      }))
     }
-    ))
-    console.log('s2 :' + this.state.seconds)
+
+    if (this.state.seconds > 59) {
+      this.state.minutes ++
+      this.setState(previousState => ({
+        seconds: `00`,
+        minutes: + previousState.minutes
+      }))
+
+      if (this.state.minutes < 10){
+        this.setState(previousState => ({
+          minutes: `0` + previousState.minutes
+        }))
+      } else {
+        this.setState(previousState => ({
+          minutes: + previousState.minutes
+        }))
+      }
+    }
+
+    if (this.state.minutes > 59) {
+      this.state.hours ++
+      this.setState(previousState => ({
+        minutes: `00`,
+        hours: + previousState.hours
+      }))
+      
+      if (this.state.hours < 10){
+        this.setState(previousState => ({
+          hours: `0` + previousState.hours
+        }))
+      } else {
+        this.setState(previousState => ({
+          hours: + previousState.hours
+        }))
+      }
+    }
   }
   render() {
 
@@ -48,23 +104,29 @@ export default class Bananas extends Component {
     return (
       <Container>
         <Header />
-        <Content>
-          <Text>
-            This is Content Sectionhh
-          </Text>
-          <Text>
-            {this.state.seconds}
-          </Text>
+        <Content contentContainerStyle={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}>
+          <View style={{
+            flexDirection: 'row',
+            padding: 15,
+            justifyContent: 'center',
+            alignItems: 'center' ,
+            backgroundColor: 'blue',
+            width: '50%',
+            borderRadius: 30,
+            }}
+          >
+            <Text style={{fontSize: 35, color: 'white'}}>{this.state.hours} : </Text><Text style={{fontSize: 35, color: 'white'}}>{this.state.minutes} : </Text><Text style={{fontSize: 35, color: 'white'}}>{this.state.seconds}</Text>
+          </View>
         </Content>
         <Footer>
           <FooterTab>
-            <Button onPress={()=>this.play()}>
+            <Button onPress={() => this.play()}>
               <Text>PLAY</Text>
             </Button>
-            <Button>
+            <Button onPress={() => this.stop()}>
               <Text>STOP</Text>
             </Button>
-            <Button>
+            <Button onPress={() => this.reset()}>
               <Text>RESTART</Text>
             </Button>
           </FooterTab>
