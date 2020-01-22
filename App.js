@@ -28,9 +28,10 @@ export default class Bananas extends Component {
   chronometer(){
     console.log('s1 :' + this.state.seconds)
     let s = this.state.seconds ++
-    this.setState({
-      seconds: `0` + s
-    })
+    this.setState(previousState => ({
+      seconds: `0` + previousState.seconds
+    }
+    ))
     console.log('s2 :' + this.state.seconds)
   }
   render() {
